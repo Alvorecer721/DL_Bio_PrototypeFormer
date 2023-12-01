@@ -1,0 +1,9 @@
+defaults:
+  - meta_base
+
+cls:
+  _target_: methods.protoformer.ProtoFormer
+  is_feature: ${protoformer_is_feature}
+  layer_n: ${protoformer_layer_num}
+
+name: protoformer
