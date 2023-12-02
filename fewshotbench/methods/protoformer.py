@@ -47,7 +47,7 @@ class ProtoFormer(MetaTemplate):
     def set_forward(self, x):
         # Compute the prototypes (support) and queries (embeddings) for each datapoint.
         # Remember that you implemented a function to compute this before.
-        z_support, z_query = self.parse_feature(x, self.is_feature)
+        z_support, z_query = self.parse_feature(x, False)
 
         # Compute the prototype.
         z_support = z_support.contiguous().view(self.n_way, self.n_support, -1)
