@@ -28,8 +28,8 @@ checkpoint:
   time: latest
 
 wandb:
-  project: "DL_in_Bio_Protoformer"
-  entity: "margarita-sagitova"
+  project: "fewshotbench"
+  entity: "cs502"
   mode: "online" # Can set to offline, disabled
 
 iter_num: 600
