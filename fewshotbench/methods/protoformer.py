@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+from torch.autograd import Variable
 
 from methods.meta_template import MetaTemplate
 
@@ -75,6 +76,7 @@ class ProtoFormer(MetaTemplate):
 
         # Create the category labels for the queries.
         y_query = torch.from_numpy(np.repeat(range( self.n_way ), self.n_query ))
+        y_query = Variable(y_query.cuda())
 
         # Compute the loss.
         loss = self.classifier_loss_fn(scores, y_query) + self.contrastive_coef * self.prototype_loss_fn(self.pair_dist)
