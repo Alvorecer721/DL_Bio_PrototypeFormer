@@ -110,7 +110,7 @@ def euclidean_dist_3d(x):
 def contrastive_loss(pairwise_dist):
     n = pairwise_dist.shape[0]
 
-    mask = torch.eye(n)
+    mask = torch.eye(n).cuda()
     dist_sums = pairwise_dist.sum((2, 3))
 
     positive_sums = (dist_sums * mask).sum() + 1
