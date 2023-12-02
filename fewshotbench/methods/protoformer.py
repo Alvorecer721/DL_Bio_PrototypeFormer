@@ -36,13 +36,12 @@ class PEM(nn.Module):
         return x
 
 class ProtoFormer(MetaTemplate):
-    def __init__(self, backbone, n_way, n_support, is_feature=True, layer_n=1, contrastive_coef=1):
+    def __init__(self, backbone, n_way, n_support, layer_n=1, contrastive_coef=1):
         super(ProtoFormer, self).__init__(backbone, n_way, n_support)
         self.classifier_loss_fn = nn.CrossEntropyLoss()
         self.prototype_loss_fn = contrastive_loss
         self.pair_dist = None
         self.pem = PEM(self.feature.final_feat_dim, layer_n)
-        self.is_feature = is_feature
         self.contrastive_coef = contrastive_coef
 
     def set_forward(self, x):
@@ -113,7 +112,7 @@ def contrastive_loss(pairwise_dist):
     mask = torch.eye(n).cuda()
     dist_sums = pairwise_dist.sum((2, 3))
 
-    positive_sums = (dist_sums * mask).sum() + 1
-    negative_sums = (dist_sums * (1 - mask)).sum() + 1
+    positive_sums = torch.diagonal(dist_sums) + 1
+    negative_sums = (dist_sums * (1 - mask)).sum()
 
-    return torch.exp(positive_sums / negative_sums / n)
+    return torch.exp(positive_sums / negative_sums / n).mean()

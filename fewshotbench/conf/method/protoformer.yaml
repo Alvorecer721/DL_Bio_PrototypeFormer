@@ -3,8 +3,8 @@ defaults:
 
 cls:
   _target_: methods.protoformer.ProtoFormer
-  is_feature: ${protoformer_is_feature}
+  contrastive_coef: ${contrastive_coef}
   layer_n: ${protoformer_layer_num}
 
 name: protoformer
-stop_epoch: 200
+stop_epoch: 100
