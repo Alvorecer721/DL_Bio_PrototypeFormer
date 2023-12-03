@@ -39,7 +39,7 @@ class ProtoFormer(MetaTemplate):
     def __init__(self, backbone, n_way, n_support, layer_n=1, contrastive_coef=1):
         super(ProtoFormer, self).__init__(backbone, n_way, n_support)
         self.classifier_loss_fn = nn.CrossEntropyLoss()
-        self.prototype_loss_fn = contrastive_loss_1
+        self.prototype_loss_fn = contrastive_loss
         self.pair_dist = None
         self.pem = PEM(self.feature.final_feat_dim, layer_n)
         self.contrastive_coef = contrastive_coef
