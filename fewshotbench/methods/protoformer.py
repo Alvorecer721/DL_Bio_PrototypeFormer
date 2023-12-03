@@ -116,3 +116,15 @@ def contrastive_loss(pairwise_dist):
     negative_sums = (dist_sums * (1 - mask)).sum() + 1
 
     return torch.exp(positive_sums / negative_sums / n)
+
+def contrastive_loss_1(pairwise_dist):
+    n = pairwise_dist.shape[0]
+
+    mask = torch.eye(n).cuda()
+    dist_sums = pairwise_dist.mean((2, 3))
+
+    dist_sums_exp = torch.exp(dist_sums)
+    positive_sums = torch.diagonal(dist_sums_exp)
+    negative_sums = (dist_sums_exp * (1 - mask)).sum()
+
+    return torch.log(positive_sums / negative_sums).mean()
