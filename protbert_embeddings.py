@@ -18,7 +18,7 @@ protein_ids = [file.split('.')[0] for file in pt_files]
     The used protein sequences are stored in the file subset_fasta.fasta.
 '''
 
-with open("data/swissprot/uniprot_sprot.fasta", "r") as original_fasta, open(subset_fasta_path, "w") as subset_fasta:
+with open("./fewshotbench/data/swissprot/uniprot_sprot.fasta", "r") as original_fasta, open(subset_fasta_path, "w") as subset_fasta:
     records = [record for record in SeqIO.parse(original_fasta, "fasta") if record.id.split("|")[1] in protein_ids]
     SeqIO.write(records, subset_fasta, "fasta")
 
