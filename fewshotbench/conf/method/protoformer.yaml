@@ -7,4 +7,3 @@ cls:
   layer_n: ${protoformer_layer_num}
 
 name: protoformer
-stop_epoch: 100
