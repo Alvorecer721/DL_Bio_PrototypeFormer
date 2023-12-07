@@ -5,7 +5,7 @@ import torch
 import re
 
 
-original_pt_folder = "./fewshotbench/data/swissprot/embeds/"  
+original_pt_folder = "data/swissprot/embeds/"  
 subset_fasta_path = "subset.fasta"  
 
 pt_files = [file for file in os.listdir(original_pt_folder) if file.endswith(".pt")]
