@@ -78,7 +78,6 @@ def select_annot_via_ic(annots, term_frequency, max_freq):
     return annots_with_freq[0][1]
 
 def get_samples_using_ic(root, embed_dir="embeds"):
-    print(os.path.join(root, embed_dir))
     samples = []
     fasta = SeqIO.parse(open(os.path.join(root,"uniprot_sprot.fasta")), 'fasta')
     reader = GafReader(os.path.join(root,"filtered_goa_uniprot_all_noiea.gaf")).read_gaf()
