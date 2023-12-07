@@ -4,6 +4,7 @@ from transformers import BertModel, BertTokenizer
 import torch
 import re
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 original_pt_folder = "./fewshotbench/data/swissprot/embeds/"  
 subset_fasta_path = "subset.fasta"  
@@ -24,7 +25,7 @@ with open("./fewshotbench/data/swissprot/uniprot_sprot.fasta", "r") as original_
 
 
 tokenizer = BertTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
-model = BertModel.from_pretrained("Rostlab/prot_bert")
+model = BertModel.from_pretrained("Rostlab/prot_bert").to(device)
 
 save_path = "./fewshotbench/data/swissprot/protbert_emb"
 os.makedirs(save_path, exist_ok=True)
@@ -39,7 +40,7 @@ with open("subset.fasta", "r") as fasta_file:
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
 
-            encoded_input = tokenizer(sequence, return_tensors="pt")
+            encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
 
             embedding = output["last_hidden_state"].mean(dim=1)
