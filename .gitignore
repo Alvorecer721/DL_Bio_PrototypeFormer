@@ -163,3 +163,4 @@ cython_debug/
 fewshotbench/data/*
 fewshotbench/wandb/*
 fewshotbench/outputs/*
+fewshotbench/checkpoints/*

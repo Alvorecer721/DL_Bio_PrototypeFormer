@@ -51,6 +51,8 @@ class ProtoFormer(MetaTemplate):
         self.n_sub_support = n_sub_support
 
     def set_forward(self, x):
+        x = x.to(self.device)
+
         # Compute the prototypes (support) and queries (embeddings) for each datapoint.
         z_support, z_query = self.parse_feature(x, False)
 
@@ -77,10 +79,10 @@ class ProtoFormer(MetaTemplate):
     def set_forward_loss(self, x):
         # Compute the similarity scores between the prototypes and the queries.
         scores = self.set_forward(x)
+        scores.to(self.device)
 
         # Create the category labels for the queries.
-        y_query = torch.from_numpy(np.repeat(range( self.n_way ), self.n_query ))
-        # y_query = Variable(y_query.cuda())
+        y_query = torch.from_numpy(np.repeat(range( self.n_way ), self.n_query )).to(self.device)
 
         # Compute the loss.
         loss = self.classifier_loss_fn(scores, y_query) + self.contrastive_coef * self.prototype_loss_fn(self.pair_dist)
