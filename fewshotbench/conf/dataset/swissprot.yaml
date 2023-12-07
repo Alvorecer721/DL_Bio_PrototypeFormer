@@ -12,7 +12,7 @@ dataset:
 
   set_cls:
     _target_: datasets.prot.swissprot.SPSetDataset
-    embed_dir: ${embed_dir}
+    embed_dir: ${dataset.embed_dir}
 
 backbone:
   _target_: backbones.fcnet.FCNet
