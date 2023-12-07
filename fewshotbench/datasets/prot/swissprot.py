@@ -34,9 +34,9 @@ class SPDataset(FewShotDataset, ABC):
         
 
 class SPSimpleDataset(SPDataset):
-    def __init__(self, batch_size, root='./data/', mode='train', min_samples=20, embed_dir="embeds"):
+    def __init__(self, batch_size, root='./data/', mode='train', min_samples=20):
         self.initialize_data_dir(root, download_flag=False)
-        self.samples = self.load_swissprot(mode = mode, min_samples = min_samples, embed_dir=embed_dir)
+        self.samples = self.load_swissprot(mode = mode, min_samples = min_samples)
         self.batch_size = batch_size
         self.encoder = encodings(self.data_dir)
         super().__init__()
