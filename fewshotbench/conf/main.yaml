@@ -18,9 +18,11 @@ exp:
 
 optimizer: Adam
 lr: 0.001
+weight_decay: 0
 optimizer_cls:
   _target_: torch.optim.${optimizer}
   lr: ${lr}
+  weight_decay: ${weight_decay}
 
 checkpoint:
   dir: checkpoints/${exp.name}/${dataset.name}/${method.name}_${model}
@@ -28,8 +30,8 @@ checkpoint:
   time: latest
 
 wandb:
-  project: ???
-  entity: ???
+  project: "fewshotbench"
+  entity: "cs502"
   mode: "online" # Can set to offline, disabled
 
 iter_num: 600

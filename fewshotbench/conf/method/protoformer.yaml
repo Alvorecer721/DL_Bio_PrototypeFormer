@@ -1,0 +1,9 @@
+defaults:
+  - meta_base
+
+cls:
+  _target_: methods.protoformer.ProtoFormer
+  contrastive_coef: ${contrastive_coef}
+  layer_n: ${protoformer_layer_num}
+
+name: protoformer
