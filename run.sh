@@ -2,6 +2,6 @@
 
 cd fewshotbench
 
-python run.py exp.name='muris_fcn_1_layers_1_contrastive_coef_lr_1e-4_l2_reg' method=protoformer dataset=tabula_muris lr=1e-4 +contrastive_coef=1 +protoformer_layer_num=1 weight_decay=0.01
-python run.py exp.name='muris_fcn_1_layers_0_contrastive_coef_lr_1e-4_l2_reg' method=protoformer dataset=tabula_muris lr=1e-4 +contrastive_coef=0 +protoformer_layer_num=1 weight_decay=0.01
-python run.py exp.name='muris_fcn_1_layers_0.1_contrastive_coef_lr_1e-4_l2_reg' method=protoformer dataset=tabula_muris lr=1e-4 +contrastive_coef=0.1 +protoformer_layer_num=1 weight_decay=0.01
+python run.py exp.name='muris_fcn_1_layers_1_contrastive_coef_lr_3e-4_l2_reg' method=protoformer dataset=tabula_muris lr=3e-4 +contrastive_coef=1 +protoformer_layer_num=1 weight_decay=0.01
+python run.py exp.name='muris_fcn_1_layers_0_contrastive_coef_lr_3e-4_l2_reg' method=protoformer dataset=tabula_muris lr=3e-4 +contrastive_coef=0 +protoformer_layer_num=1 weight_decay=0.01
+python run.py exp.name='muris_fcn_1_layers_0.1_contrastive_coef_lr_3e-4_l2_reg' method=protoformer dataset=tabula_muris lr=3e-4 +contrastive_coef=0.1 +protoformer_layer_num=1 weight_decay=0.01
