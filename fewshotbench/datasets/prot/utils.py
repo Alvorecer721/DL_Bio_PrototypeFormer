@@ -77,7 +77,7 @@ def select_annot_via_ic(annots, term_frequency, max_freq):
     annots_with_freq.sort()
     return annots_with_freq[0][1]
 
-def get_samples_using_ic(root, embed_dir="protbert_emb"):
+def get_samples_using_ic(root, embed_dir="embeds"):
     samples = []
     fasta = SeqIO.parse(open(os.path.join(root,"uniprot_sprot.fasta")), 'fasta')
     reader = GafReader(os.path.join(root,"filtered_goa_uniprot_all_noiea.gaf")).read_gaf()
@@ -109,7 +109,7 @@ def get_samples_using_ic(root, embed_dir="protbert_emb"):
                 continue
     return samples
 
-def get_samples(root, level = 5, embed_dir="protbert_emb"):
+def get_samples(root, level = 5, embed_dir="embeds"):
     """ preprocess samples for cryptic with annotations from a given level """
     samples = []
     fasta = SeqIO.parse(open(os.path.join(root,"uniprot_sprot.fasta")), 'fasta')
