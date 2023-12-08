@@ -9,7 +9,7 @@ from methods.meta_template import MetaTemplate
 
 class PEM(nn.Module):
 
-    def __init__(self, x_dim, n_layer, n_head, ffn_dim, dropout=0.):
+    def __init__(self, x_dim, n_layer, n_head, ffn_dim, dropout, norm_first):
         super().__init__()
 
         layers = []
@@ -22,7 +22,7 @@ class PEM(nn.Module):
                                            dim_feedforward=ffn_dim, 
                                            dropout=dropout, 
                                            activation='gelu', 
-                                           norm_first=False, 
+                                           norm_first=norm_first, 
                                            batch_first=True
                                            )
             )
@@ -37,7 +37,19 @@ class PEM(nn.Module):
         return x
 
 class ProtoFormer(MetaTemplate):
-    def __init__(self, backbone, n_way, n_support, n_sub_support, n_layer=1, n_head=2, ffn_dim=1280, contrastive_coef=1):
+    def __init__(
+            self, 
+            backbone, 
+            n_way, 
+            n_support, 
+            n_sub_support, 
+            n_layer=1, 
+            n_head=2, 
+            ffn_dim=1280, 
+            contrastive_coef=1,
+            dropout=0.,
+            norm_first=True,
+        ):
         super(ProtoFormer, self).__init__(backbone, n_way, n_support)
         self.classifier_loss_fn = nn.CrossEntropyLoss()
         self.prototype_loss_fn = contrastive_loss
@@ -45,7 +57,9 @@ class ProtoFormer(MetaTemplate):
         self.pem = PEM(x_dim=self.feature.final_feat_dim, 
                        n_layer=n_layer, 
                        ffn_dim=ffn_dim,
-                       n_head=n_head
+                       n_head=n_head,
+                       dropout=dropout,
+                       norm_first=norm_first
                     )
         self.contrastive_coef = contrastive_coef
         self.n_sub_support = n_sub_support

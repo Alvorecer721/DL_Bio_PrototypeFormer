@@ -8,6 +8,8 @@ cls:
   contrastive_coef: ${contrastive_coef}
   n_sub_support: ${sub_support}
   ffn_dim: ${feedforward_dim}
+  dropout: ${dropout}
+  norm_first: ${encoder_norm_first}
 
 
 name: protoformer
