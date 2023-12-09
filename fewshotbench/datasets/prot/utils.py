@@ -179,10 +179,13 @@ def get_annot_counts(samples):
     return counts
 
 def get_embedding(emb_path, entry):
-    """ Returns the ESM embedding for a protein entry """
+    """ Returns the embedding for a protein entry """
     fn = f'{emb_path}/{entry}.pt'
     embs = torch.load(fn)
-    emb = embs['mean_representations'][EMB_LAYER]
+    if "protbert" in emb_path:
+        emb = embs['embedding'].squeeze()
+    else:
+        emb = embs['mean_representations'][EMB_LAYER]
     return emb
     
 def encodings(root, level = 5):
