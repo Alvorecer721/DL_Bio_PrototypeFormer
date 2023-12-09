@@ -73,7 +73,7 @@ class SPSetDataset(SPDataset):
 
 
         self.categories = get_ids(samples_all) # Unique annotations
-        self.x_dim = PROTDIM
+        self.x_dim = samples_all[0].input_seq.shape[0] # PROTDIM
 
         self.sub_dataloader = []
 
