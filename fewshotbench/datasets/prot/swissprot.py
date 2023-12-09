@@ -23,9 +23,9 @@ class SPDataset(FewShotDataset, ABC):
     _dataset_name = 'swissprot'
     _dataset_url = 'https://drive.google.com/u/0/uc?id=1a3IFmUMUXBH8trx_VWKZEGteRiotOkZS&export=download'
 
-    def load_swissprot(self, level = 5, mode='train', min_samples =20, embed_dir="embeds"):
+    def load_swissprot(self, level = 5, mode='train', min_samples =20):
         # samples = get_samples(root = self.data_dir, level=level)
-        samples = get_samples_using_ic(root = self.data_dir, embed_dir=embed_dir)
+        samples = get_samples_using_ic(root = self.data_dir)
         samples = check_min_samples(samples, min_samples)
 
         unique_ids = set(get_mode_ids(samples)[mode])
@@ -34,9 +34,9 @@ class SPDataset(FewShotDataset, ABC):
         
 
 class SPSimpleDataset(SPDataset):
-    def __init__(self, batch_size, root='./data/', mode='train', min_samples=20, embed_dir="embeds"):
+    def __init__(self, batch_size, root='./data/', mode='train', min_samples=20):
         self.initialize_data_dir(root, download_flag=False)
-        self.samples = self.load_swissprot(mode = mode, min_samples = min_samples, embed_dir=embed_dir)
+        self.samples = self.load_swissprot(mode = mode, min_samples = min_samples)
         self.batch_size = batch_size
         self.encoder = encodings(self.data_dir)
         super().__init__()
@@ -61,7 +61,7 @@ class SPSimpleDataset(SPDataset):
 
 class SPSetDataset(SPDataset):
 
-    def __init__(self, n_way, n_support, n_query, n_episode=100, root='./data', mode='train', embed_dir="embeds"):
+    def __init__(self, n_way, n_support, n_query, n_episode=100, root='./data', mode='train'):
         self.initialize_data_dir(root, download_flag=False)
 
         self.n_way = n_way
@@ -69,7 +69,7 @@ class SPSetDataset(SPDataset):
         min_samples = n_support + n_query
         self.encoder = encodings(self.data_dir)
 
-        samples_all= self.load_swissprot(mode = mode, min_samples = min_samples, embed_dir=embed_dir)
+        samples_all= self.load_swissprot(mode = mode, min_samples = min_samples)
 
 
         self.categories = get_ids(samples_all) # Unique annotations
