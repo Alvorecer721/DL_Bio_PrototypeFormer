@@ -86,6 +86,8 @@ class SPSetDataset(SPDataset):
             sub_dataset = SubDataset(samples, self.data_dir)
             self.sub_dataloader.append(torch.utils.data.DataLoader(sub_dataset, **sub_data_loader_params))
 
+        self.num_workers = 0 if ("protbert" in embed_dir) else 4
+
         super().__init__()
 
     def __getitem__(self, i):
@@ -100,7 +102,7 @@ class SPSetDataset(SPDataset):
 
     def get_data_loader(self) -> DataLoader:
         sampler = EpisodicBatchSampler(len(self), self.n_way, self.n_episode)
-        data_loader_params = dict(batch_sampler=sampler, num_workers=4, pin_memory=True)
+        data_loader_params = dict(batch_sampler=sampler, num_workers=self.num_workers, pin_memory=True)
         data_loader = torch.utils.data.DataLoader(self, **data_loader_params)
         return data_loader
 
