@@ -183,7 +183,7 @@ def get_embedding(emb_path, entry):
     fn = f'{emb_path}/{entry}.pt'
     embs = torch.load(fn)
     if "protbert" in emb_path:
-        emb = embs['embedding'][0].to('cpu')
+        emb = embs['embedding'][0]
     else:
         emb = embs['mean_representations'][EMB_LAYER]
     return emb
