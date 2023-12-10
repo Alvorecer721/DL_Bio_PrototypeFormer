@@ -30,7 +30,7 @@ model = BertModel.from_pretrained("Rostlab/prot_bert").to(device)
 save_path = "./fewshotbench/data/swissprot/protbert_emb"
 os.makedirs(save_path, exist_ok=True)
 
-print("start generating")
+print(device)
 
 with open("subset.fasta", "r") as fasta_file:
     line = fasta_file.readline().strip()
