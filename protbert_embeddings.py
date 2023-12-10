@@ -45,7 +45,7 @@ with open("subset.fasta", "r") as fasta_file:
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
             print(len(sequence))
-            if len(sequence > 2641):
+            if len(sequence) > 2641:
                 sequence = sequence[:2641]
             
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
