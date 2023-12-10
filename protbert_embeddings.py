@@ -44,11 +44,11 @@ with open("subset.fasta", "r") as fasta_file:
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
-            
+
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
 
             embedding = output["last_hidden_state"].mean(dim=1).cpu().detach()
-
+            print(embedding)
             torch.save({"embedding": embedding}, f"{save_path}/{protein_id}.pt")
             
