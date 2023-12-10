@@ -49,10 +49,10 @@ with open("subset.fasta", "r") as fasta_file:
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
-            if len(sequence) > 3000:
+            if len(sequence) > 2000:
                 torch.cuda.empty_cache()
                 large_seq += 1
-                sequence = sequence[:2641]
+                sequence = sequence[:2000]
             
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
