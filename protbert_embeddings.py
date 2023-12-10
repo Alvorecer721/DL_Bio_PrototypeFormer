@@ -39,11 +39,14 @@ with open("subset.fasta", "r") as fasta_file:
             protein_id = line.split("|")[1]
             print(protein_id)
 
-            sequence_line = fasta_file.readline().strip()
+            sequence_line = ''
+            while line != '' and not line.startswith(">"):
+                line = fasta_file.readline().strip()
+                sequence_line += line
             print(sequence_line)
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
-            print(sequence)
+
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
 
