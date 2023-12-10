@@ -34,7 +34,8 @@ os.makedirs(save_path, exist_ok=True)
 with open("subset.fasta", "r") as fasta_file:
     line = fasta_file.readline().strip()
     while line != '':
-        if line.startswith(">"):  
+        if line.startswith(">"): 
+            torch.cuda.empty_cache()  
             protein_id = line.split("|")[1]
             sequence_line = ''
             line = fasta_file.readline().strip()
