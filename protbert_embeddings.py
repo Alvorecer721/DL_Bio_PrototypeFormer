@@ -33,8 +33,14 @@ os.makedirs(save_path, exist_ok=True)
 
 with open("subset.fasta", "r") as fasta_file:
     line = fasta_file.readline().strip()
+    i = 0
+    large_seq = 0
     while line != '':
-        if line.startswith(">"): 
+        if line.startswith(">"):
+            i += 1
+            if i % 1000 == 0:
+                torch.cuda.empty_cache()
+                print(i)  
             protein_id = line.split("|")[1]
             sequence_line = ''
             line = fasta_file.readline().strip()
@@ -44,8 +50,8 @@ with open("subset.fasta", "r") as fasta_file:
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
-            print(len(sequence))
-            if len(sequence) > 2641:
+            if len(sequence) > 3000:
+                large_seq += 1
                 sequence = sequence[:2641]
             
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
@@ -55,3 +61,4 @@ with open("subset.fasta", "r") as fasta_file:
 
             torch.save({"embedding": embedding}, f"{save_path}/{protein_id}.pt")
             
+print(large_seq/i)
