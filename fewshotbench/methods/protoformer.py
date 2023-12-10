@@ -45,10 +45,9 @@ class ProtoFormer(MetaTemplate):
             n_sub_support, 
             n_layer=1, 
             n_head=2, 
-            ffn_dim=1280, 
             contrastive_coef=1,
             dropout=0.,
-            norm_first=True,
+            norm_first=False,
             contrastive_loss="original"
         ):
         super(ProtoFormer, self).__init__(backbone, n_way, n_support)
@@ -57,7 +56,7 @@ class ProtoFormer(MetaTemplate):
         self.pair_dist = None
         self.pem = PEM(x_dim=self.feature.final_feat_dim, 
                        n_layer=n_layer, 
-                       ffn_dim=ffn_dim,
+                       ffn_dim=self.feature.final_feat_dim,
                        n_head=n_head,
                        dropout=dropout,
                        norm_first=norm_first

@@ -7,7 +7,6 @@ cls:
   n_head: ${protoformer_head_num}
   contrastive_coef: ${contrastive_coef}
   n_sub_support: ${sub_support}
-  ffn_dim: ${feedforward_dim}
   dropout: ${dropout}
   norm_first: ${encoder_norm_first}
   contrastive_loss: ${contrastive_loss}
