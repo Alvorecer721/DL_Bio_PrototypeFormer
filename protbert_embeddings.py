@@ -44,9 +44,11 @@ with open("subset.fasta", "r") as fasta_file:
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
-
-            encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             print(len(sequence))
+            if len(sequence > 2641):
+                sequence = sequence[:2641]
+            
+            encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
 
             embedding = output["last_hidden_state"].mean(dim=1).cpu().detach()
