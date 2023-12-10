@@ -77,7 +77,7 @@ def select_annot_via_ic(annots, term_frequency, max_freq):
     annots_with_freq.sort()
     return annots_with_freq[0][1]
 
-def get_samples_using_ic(root):
+def get_samples_using_ic(root, embed_dir="embeds"):
     samples = []
     fasta = SeqIO.parse(open(os.path.join(root,"uniprot_sprot.fasta")), 'fasta')
     reader = GafReader(os.path.join(root,"filtered_goa_uniprot_all_noiea.gaf")).read_gaf()
@@ -101,7 +101,7 @@ def get_samples_using_ic(root):
                 ancestors = list(ancestors)
                 annot = select_annot_via_ic(ancestors, term_frequency, max_freq)
                 samples.append(ProtSample(
-                    input_seq = get_embedding(os.path.join(root, "embeds"), entry),
+                    input_seq = get_embedding(os.path.join(root, embed_dir), entry),
                     annot= annot,
                     entry= entry
                 ))
@@ -109,7 +109,7 @@ def get_samples_using_ic(root):
                 continue
     return samples
 
-def get_samples(root, level = 5):
+def get_samples(root, level = 5, embed_dir="embeds"):
     """ preprocess samples for cryptic with annotations from a given level """
     samples = []
     fasta = SeqIO.parse(open(os.path.join(root,"uniprot_sprot.fasta")), 'fasta')
@@ -130,7 +130,7 @@ def get_samples(root, level = 5):
                     ancestors |= adict[a]
                 annot = select_annot(annots, ancestors, level)
                 samples.append(ProtSample(
-                    input_seq = get_embedding(os.path.join(root, "embeds"), entry),
+                    input_seq = get_embedding(os.path.join(root, embed_dir), entry),
                     annot= annot,
                     entry= entry
                 ))
@@ -179,10 +179,13 @@ def get_annot_counts(samples):
     return counts
 
 def get_embedding(emb_path, entry):
-    """ Returns the ESM embedding for a protein entry """
+    """ Returns the embedding for a protein entry """
     fn = f'{emb_path}/{entry}.pt'
     embs = torch.load(fn)
-    emb = embs['mean_representations'][EMB_LAYER]
+    if "protbert" in emb_path:
+        emb = embs['embedding'][0]
+    else:
+        emb = embs['mean_representations'][EMB_LAYER]
     return emb
     
 def encodings(root, level = 5):
