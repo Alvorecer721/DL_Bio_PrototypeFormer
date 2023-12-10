@@ -30,7 +30,6 @@ model = BertModel.from_pretrained("Rostlab/prot_bert").to(device)
 save_path = "./fewshotbench/data/swissprot/protbert_emb"
 os.makedirs(save_path, exist_ok=True)
 
-print(device)
 
 with open("subset.fasta", "r") as fasta_file:
     line = fasta_file.readline().strip()
@@ -43,6 +42,7 @@ with open("subset.fasta", "r") as fasta_file:
             while line != '' and not line.startswith(">"):
                 line = fasta_file.readline().strip()
                 sequence_line += line
+                print(line)
             print(sequence_line)
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
