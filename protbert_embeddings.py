@@ -39,9 +39,10 @@ with open("subset.fasta", "r") as fasta_file:
             print(protein_id)
 
             sequence_line = ''
+            line = fasta_file.readline().strip()
             while line != '' and not line.startswith(">"):
-                line = fasta_file.readline().strip()
                 sequence_line += line
+                line = fasta_file.readline().strip()
                 print(line)
             print(sequence_line)
             
@@ -54,4 +55,3 @@ with open("subset.fasta", "r") as fasta_file:
 
             torch.save({"embedding": embedding}, f"{save_path}/{protein_id}.pt")
             
-            line = fasta_file.readline().strip()
