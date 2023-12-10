@@ -39,7 +39,6 @@ with open("subset.fasta", "r") as fasta_file:
         if line.startswith(">"):
             i += 1
             if i % 1000 == 0:
-                torch.cuda.empty_cache()
                 print(i)  
             protein_id = line.split("|")[1]
             sequence_line = ''
@@ -51,6 +50,7 @@ with open("subset.fasta", "r") as fasta_file:
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
             sequence = ' '.join(sequence)
             if len(sequence) > 3000:
+                torch.cuda.empty_cache()
                 large_seq += 1
                 sequence = sequence[:2641]
             
