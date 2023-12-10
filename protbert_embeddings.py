@@ -37,6 +37,7 @@ with open("subset.fasta", "r") as fasta_file:
     while line != '':
         if line.startswith(">"):  
             protein_id = line.split("|")[1]
+            print('protein_id')
 
             sequence_line = fasta_file.readline().strip()
             
