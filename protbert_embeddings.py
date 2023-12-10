@@ -36,15 +36,12 @@ with open("subset.fasta", "r") as fasta_file:
     while line != '':
         if line.startswith(">"):  
             protein_id = line.split("|")[1]
-            print(protein_id)
 
             sequence_line = ''
             line = fasta_file.readline().strip()
             while line != '' and not line.startswith(">"):
                 sequence_line += line
                 line = fasta_file.readline().strip()
-                print(line)
-            print(sequence_line)
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
 
