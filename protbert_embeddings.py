@@ -32,7 +32,8 @@ os.makedirs(save_path, exist_ok=True)
 
 
 with open("subset.fasta", "r") as fasta_file:
-    for line in fasta_file:
+    line = fasta_file.readline()
+    while line:
         if line.startswith(">"):  
             protein_id = line.strip().split("|")[1]
 
@@ -46,3 +47,5 @@ with open("subset.fasta", "r") as fasta_file:
             embedding = output["last_hidden_state"].mean(dim=1).cpu().detach()
 
             torch.save({"embedding": embedding}, f"{save_path}/{protein_id}.pt")
+            
+            line = fasta_file.readline()
