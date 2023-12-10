@@ -10,6 +10,7 @@ cls:
   ffn_dim: ${feedforward_dim}
   dropout: ${dropout}
   norm_first: ${encoder_norm_first}
+  contrastive_loss: ${contrastive_loss}
 
 
 name: protoformer

@@ -49,10 +49,11 @@ class ProtoFormer(MetaTemplate):
             contrastive_coef=1,
             dropout=0.,
             norm_first=True,
+            contrastive_loss="original"
         ):
         super(ProtoFormer, self).__init__(backbone, n_way, n_support)
         self.classifier_loss_fn = nn.CrossEntropyLoss()
-        self.prototype_loss_fn = contrastive_loss
+        self.prototype_loss_fn = original_contrastive_loss if contrastive_loss=="original" else info_NCE_loss
         self.pair_dist = None
         self.pem = PEM(x_dim=self.feature.final_feat_dim, 
                        n_layer=n_layer, 
@@ -147,7 +148,7 @@ def euclidean_dist_3d(x):
 
     return dist.view(n, k, -1).transpose(1, 2).reshape(n , n, k, k)
 
-def contrastive_loss(pairwise_dist):
+def original_contrastive_loss(pairwise_dist):
     n = pairwise_dist.shape[0]
 
     # Get the device from the input tensor
@@ -162,3 +163,21 @@ def contrastive_loss(pairwise_dist):
     negative_sums = (dist_sums * (1 - mask)).sum() + 1
 
     return torch.exp(positive_sums / negative_sums / n)
+
+def info_NCE_loss(pairwise_dist, T=1.):
+    n = pairwise_dist.shape[0]
+    k = pairwise_dist.shape[2]
+
+    # Get the device from the input tensor
+    device = pairwise_dist.device
+
+    # Create the mask tensor on the same device as pairwise_dist
+    mask_k = torch.eye(k).view(1, 1, k, k).to(device)
+    mask_n = torch.eye(n).to(device)
+    
+    exp_dist = (1 - mask_k) * torch.exp(pairwise_dist / T)
+    dist_sums = exp_dist.sum((2, 3))
+
+    p = dist_sums / dist_sums.sum(1, keepdim=True)
+
+    return torch.mean(- torch.log(p))
