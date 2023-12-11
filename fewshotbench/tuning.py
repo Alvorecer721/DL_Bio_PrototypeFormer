@@ -65,10 +65,10 @@ def tune(dataset="swissprot_no_backbone"):
             wandb.log({"eval_results": table})
             wandb.finish()
 
-            return acc_mean  # or any other metric you want to optimize
+            return results[-2][-2], results[-2][-1] # validation acc mean 
 
     # Run Optuna study
-    study = optuna.create_study(direction="maximize")
+    study = optuna.create_study(directions=["maximize", "minimize"])
     study.optimize(objective, n_trials=30)
 
     # Output the optimization results
