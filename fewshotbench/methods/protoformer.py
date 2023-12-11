@@ -56,7 +56,7 @@ class ProtoFormer(MetaTemplate):
         self.pair_dist = None
         self.pem = PEM(x_dim=self.feature.final_feat_dim, 
                        n_layer=n_layer, 
-                       ffn_dim=self.feature.final_feat_dim,
+                       ffn_dim=self.feature.final_feat_dim, # TODO: why should we fix this?
                        n_head=n_head,
                        dropout=dropout,
                        norm_first=norm_first
