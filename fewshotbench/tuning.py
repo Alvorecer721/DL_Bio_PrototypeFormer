@@ -30,9 +30,10 @@ def tune(dataset="swissprot_no_backbone"):
             cfg = compose(config_name="main", overrides=[
                 "model=protoformer",
                 "method=protoformer",
+                "method.stop_epoch=100",
                 f"dataset={dataset}",  # Fixed dataset
-                f"optimizer_cls.lr={trial.suggest_float('lr', 1e-7, 1e-4)}",
-                f"optimizer_cls.weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-3)}",
+                f"lr={trial.suggest_float('lr', 1e-7, 1e-4)}",
+                f"weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-3)}",
                 f"method.cls.n_sub_support={trial.suggest_int('n_sub_support', 2, 4)}",
                 f"method.cls.n_layer={trial.suggest_int('n_layer', 1, 3)}",
                 f"method.cls.n_head={trial.suggest_categorical('n_head', [1, 2, 4, 5, 8])}",
@@ -60,6 +61,11 @@ def tune(dataset="swissprot_no_backbone"):
 
             results.append([trial.number, acc_mean, acc_std])
 
+            # Log results to WandB
+            table = wandb.Table(data=results, columns=["trial", "acc_mean", "acc_std"])
+            wandb.log({"eval_results": table})
+            wandb.finish()
+
             return acc_mean  # or any other metric you want to optimize
 
     # Run Optuna study
@@ -76,10 +82,6 @@ def tune(dataset="swissprot_no_backbone"):
     optuna_studies_file = f"{dataset}_studies.pkl"
     with open(optuna_studies_file, "wb") as f:
         pickle.dump(study, f)
-
-    # Log results to WandB
-    table = wandb.Table(data=results, columns=["trial", "acc_mean", "acc_std"])
-    wandb.log({"eval_results": table})
 
     # Display results in a pretty table
     display_table = PrettyTable(["trial", "acc_mean", "acc_std"])
