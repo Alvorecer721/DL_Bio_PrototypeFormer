@@ -4,11 +4,9 @@ from hydra import compose, initialize
 from hydra.utils import instantiate
 import wandb
 import torch
-import time
 from omegaconf import OmegaConf
-from utils.io_utils import get_resume_file, hydra_setup, fix_seed, model_to_dict, opt_to_dict, get_model_file
+from utils.io_utils import fix_seed
 from run import train, test
-from prettytable import PrettyTable
 import pickle
 
 def tune(dataset="swissprot_no_backbone"):
@@ -21,8 +19,6 @@ def tune(dataset="swissprot_no_backbone"):
 
     train_loader = train_dataset.get_data_loader()
     val_loader = val_dataset.get_data_loader()
-
-    results = []
 
     def objective(trial):
         with initialize(config_path="conf"):
@@ -45,10 +41,13 @@ def tune(dataset="swissprot_no_backbone"):
             ])
 
             fix_seed(cfg.exp.seed)
+            results = []
 
-            print(OmegaConf.to_yaml(cfg))
+            config_yaml = OmegaConf.to_yaml(cfg)
+            print(config_yaml)
+            wandb.log({"config_yaml": config_yaml})
 
-            # Initialize model and backbone for this trial
+            # Initialise model and backbone for this trial
             backbone = instantiate(cfg.backbone, x_dim=train_dataset.dim)
             model = instantiate(cfg.method.cls, backbone=backbone)
 
@@ -57,12 +56,13 @@ def tune(dataset="swissprot_no_backbone"):
 
             model = train(train_loader, val_loader, model, cfg)
 
-            acc_mean, acc_std = test(cfg, model, split='val')
-
-            results.append([trial.number, acc_mean, acc_std])
+            # Tuning Hyper-parameter only log result on validation set
+            for split in cfg.eval_split:
+                acc_mean, acc_std = test(cfg, model, split)
+                results.append([trial.number, split, acc_mean, acc_std])
 
             # Log results to WandB
-            table = wandb.Table(data=results, columns=["trial", "acc_mean", "acc_std"])
+            table = wandb.Table(data=results, columns=["trial", "split", "acc_mean", "acc_std"])
             wandb.log({"eval_results": table})
             wandb.finish()
 
@@ -82,12 +82,5 @@ def tune(dataset="swissprot_no_backbone"):
     optuna_studies_file = f"{dataset}_studies.pkl"
     with open(optuna_studies_file, "wb") as f:
         pickle.dump(study, f)
-
-    # Display results in a pretty table
-    display_table = PrettyTable(["trial", "acc_mean", "acc_std"])
-    for row in results:
-        display_table.add_row(row)
-    print(display_table)
-
 
 tune()
