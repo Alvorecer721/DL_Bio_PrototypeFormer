@@ -37,7 +37,7 @@ def tune(dataset="swissprot_no_backbone"):
                 f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.3)}",
                 f"method.cls.norm_first={trial.suggest_categorical('norm_first', [True, False])}",
                 f"method.cls.contrastive_loss=original", #TODO: you can modify this
-                f"exp.name=optuna_trial_{trial.number}",
+                f"exp.name={dataset}_trial_{trial.number}",
             ])
 
             fix_seed(cfg.exp.seed)
