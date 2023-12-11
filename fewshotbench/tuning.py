@@ -36,7 +36,7 @@ def tune(dataset="swissprot_no_backbone"):
                 f"method.cls.contrastive_coef={trial.suggest_float('contrastive_coef', 0.1, 2.0)}",
                 f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.3)}",
                 f"method.cls.norm_first={trial.suggest_categorical('norm_first', [True, False])}",
-                f"method.cls.contrastive_loss=original", #TODO: you can modify this
+                f"method.cls.contrastive_loss={trial.suggest_categorical('contrastive_loss', ['original', 'info_nce'])}", #TODO: you can modify this
                 f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 512, 2048)}", 
                 f"exp.name={dataset}_trial_{trial.number}",
             ])
