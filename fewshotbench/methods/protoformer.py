@@ -164,7 +164,7 @@ def original_contrastive_loss(pairwise_dist):
 
     return torch.exp(positive_sums / negative_sums / n)
 
-def info_NCE_loss(pairwise_dist, T=1.):
+def info_NCE_loss(pairwise_dist, T=1e6):
     n = pairwise_dist.shape[0]
     k = pairwise_dist.shape[2]
 
@@ -175,7 +175,7 @@ def info_NCE_loss(pairwise_dist, T=1.):
     mask_k = torch.eye(k).view(1, 1, k, k).to(device)
     mask_n = torch.eye(n).to(device)
     
-    exp_dist = (1 - mask_k) * torch.exp(pairwise_dist / T)
+    exp_dist = (1 - mask_k) * torch.exp(-pairwise_dist / T)
     dist_sums = exp_dist.sum((2, 3))
 
     p = dist_sums / dist_sums.sum(1, keepdim=True)
