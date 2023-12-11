@@ -35,9 +35,9 @@ def tune(dataset="swissprot_no_backbone"):
                 f"optimizer_cls.weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-3)}",
                 f"method.cls.n_sub_support={trial.suggest_int('n_sub_support', 2, 4)}",
                 f"method.cls.n_layer={trial.suggest_int('n_layer', 1, 3)}",
-                f"method.cls.n_head={trial.suggest_categorical('n_head', [1, 2, 3, 4, 5, 8])}",
+                f"method.cls.n_head={trial.suggest_categorical('n_head', [1, 2, 4, 5, 8])}",
                 f"method.cls.contrastive_coef={trial.suggest_float('contrastive_coef', 0.1, 2.0)}",
-                f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.5)}",
+                f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.3)}",
                 f"method.cls.norm_first={trial.suggest_categorical('norm_first', [True, False])}",
                 f"method.cls.contrastive_loss=original", #TODO: you can modify this
                 f"exp.name=optuna_trial_{trial.number}",
@@ -64,7 +64,7 @@ def tune(dataset="swissprot_no_backbone"):
 
     # Run Optuna study
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=2)
+    study.optimize(objective, n_trials=100)
 
     # Output the optimization results
     best_trial = study.best_trial
