@@ -45,7 +45,6 @@ def tune(dataset="swissprot_no_backbone"):
 
             config_yaml = OmegaConf.to_yaml(cfg)
             print(config_yaml)
-            wandb.log({"config_yaml": config_yaml})
 
             # Initialise model and backbone for this trial
             backbone = instantiate(cfg.backbone, x_dim=train_dataset.dim)
@@ -55,6 +54,10 @@ def tune(dataset="swissprot_no_backbone"):
                 model = model.cuda()
 
             model = train(train_loader, val_loader, model, cfg)
+
+            # Call it here as wandb.init() is called in train()
+            wandb.log({"config_yaml": config_yaml})
+
 
             # Tuning Hyper-parameter only log result on validation set
             for split in cfg.eval_split:
