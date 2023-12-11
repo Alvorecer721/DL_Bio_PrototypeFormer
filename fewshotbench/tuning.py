@@ -37,14 +37,14 @@ def tune(dataset="swissprot_no_backbone"):
                 f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.3)}",
                 f"method.cls.norm_first={trial.suggest_categorical('norm_first', [True, False])}",
                 f"method.cls.contrastive_loss=original", #TODO: you can modify this
+                f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 512, 2048)}", 
                 f"exp.name={dataset}_trial_{trial.number}",
             ])
 
             fix_seed(cfg.exp.seed)
             results = []
 
-            config_yaml = OmegaConf.to_yaml(cfg)
-            print(config_yaml)
+            print(OmegaConf.to_yaml(cfg))
 
             # Initialise model and backbone for this trial
             backbone = instantiate(cfg.backbone, x_dim=train_dataset.dim)
@@ -54,10 +54,6 @@ def tune(dataset="swissprot_no_backbone"):
                 model = model.cuda()
 
             model = train(train_loader, val_loader, model, cfg)
-
-            # Call it here as wandb.init() is called in train()
-            wandb.log({"config_yaml": config_yaml})
-
 
             # Tuning Hyper-parameter only log result on validation set
             for split in cfg.eval_split:
@@ -73,7 +69,7 @@ def tune(dataset="swissprot_no_backbone"):
 
     # Run Optuna study
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=100)
+    study.optimize(objective, n_trials=30)
 
     # Output the optimization results
     best_trial = study.best_trial
@@ -86,4 +82,6 @@ def tune(dataset="swissprot_no_backbone"):
     with open(optuna_studies_file, "wb") as f:
         pickle.dump(study, f)
 
-tune()
+if __name__ == '__main__':
+    tune()
+    wandb.finish()
