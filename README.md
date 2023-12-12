@@ -13,8 +13,9 @@ There are a lot of hyperparameters that you can tune with PrototypeFormer, such 
 |number of sub-supports      |            sub_support|
 |dropout                     |                dropout|
 |layer norm before layers    |     encoder_norm_first|
+|dimension of ffn in encoder |                ffn_dim|
 
 
-To see how to run an experiment refer to `run.sh`.
+To tune this hyper-parameters as well as learning rate and weight decay, we used `optuna` library, please refer to `tuninig.py`.
 
 During the project we also used protbert model to obtain different embeddings and compare the performance of the model while using different embeddings. Please, note, that due to the memory limitations, long (longer than 1000 characters) sequences were truncaetd. Overall, 7% of sequences from swissprot dataset were truncated while computing protbert embeddings.
