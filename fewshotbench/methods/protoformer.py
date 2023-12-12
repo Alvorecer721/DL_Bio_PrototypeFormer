@@ -43,6 +43,7 @@ class ProtoFormer(MetaTemplate):
             n_way, 
             n_support, 
             n_sub_support, 
+            ffn_dim,
             n_layer=1, 
             n_head=2, 
             contrastive_coef=1,
@@ -56,7 +57,7 @@ class ProtoFormer(MetaTemplate):
         self.pair_dist = None
         self.pem = PEM(x_dim=self.feature.final_feat_dim, 
                        n_layer=n_layer, 
-                       ffn_dim=self.feature.final_feat_dim,
+                       ffn_dim=ffn_dim, # TODO: why should we fix this?
                        n_head=n_head,
                        dropout=dropout,
                        norm_first=norm_first
@@ -163,7 +164,7 @@ def original_contrastive_loss(pairwise_dist):
 
     return torch.exp(positive_sums / negative_sums / n)
 
-def info_NCE_loss(pairwise_dist, T=1.):
+def info_NCE_loss(pairwise_dist, T=1e6):
     n = pairwise_dist.shape[0]
     k = pairwise_dist.shape[2]
 
@@ -174,7 +175,7 @@ def info_NCE_loss(pairwise_dist, T=1.):
     mask_k = torch.eye(k).view(1, 1, k, k).to(device)
     mask_n = torch.eye(n).to(device)
     
-    exp_dist = (1 - mask_k) * torch.exp(pairwise_dist / T)
+    exp_dist = (1 - mask_k) * torch.exp(-pairwise_dist / T)
     dist_sums = exp_dist.sum((2, 3))
 
     p = dist_sums / dist_sums.sum(1, keepdim=True)
