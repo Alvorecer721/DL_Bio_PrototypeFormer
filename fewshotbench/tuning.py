@@ -51,7 +51,7 @@ def test(cfg, model, test_dataset):
     return acc_mean, acc_std
 
 
-def tune(dataset, embed, n_trials, stop_epoch):
+def tune(dataset, embed, n_trials, stop_epoch, log_mode):
     """_summary_
 
     Args:
@@ -100,6 +100,7 @@ def tune(dataset, embed, n_trials, stop_epoch):
                 f"method.cls.contrastive_loss={trial.suggest_categorical('contrastive_loss', ['original', 'info_nce'])}",
                 f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 512, 2048)}", 
                 f"exp.name={dataset}_trial_{trial.number}",
+                f"wandb.mode={log_mode}"
             ])
 
             fix_seed(cfg.exp.seed)
@@ -148,6 +149,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run hyperparameter tuning for a model.')
     parser.add_argument('--dataset', type=str, help='Dataset to use for training')
     parser.add_argument('--embed', type=str, default='embeds', help='Embedding directory')
+    parser.add_argument('--log_mode', type=str, default='Online', help='Wandb log mode')
     parser.add_argument('--n_trials', type=int, default=20, help='Number of trials for hyper-parameter tuning')
     parser.add_argument('--stop_epoch', type=int, default=60, help='Number of epochs to stop training')
 
@@ -158,8 +160,8 @@ if __name__ == '__main__':
         args.dataset, 
         args.embed, 
         args.n_trials, 
-        args.stop_epoch
+        args.stop_epoch,
+        args.log_mode
     )
 
-    tune()
     wandb.finish()
