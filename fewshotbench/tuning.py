@@ -129,7 +129,7 @@ def tune(dataset, embed, n_trials, stop_epoch):
             return results[-2][-2] # validation accuracy
 
     # Run Optuna study
-    study = optuna.create_study(directions="maximize")
+    study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=n_trials)
 
     # Output the optimization results
