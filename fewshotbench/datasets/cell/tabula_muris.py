@@ -44,6 +44,7 @@ class TMSimpleDataset(TMDataset):
         self.initialize_data_dir(root, download_flag=True)
         self.samples, self.targets = self.load_tabular_muris(mode, min_samples)
         self.batch_size = batch_size
+        self.mode = mode
         super().__init__()
 
     def __getitem__(self, i):
