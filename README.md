@@ -1,7 +1,7 @@
 # PrototypeFormer
  EPFL CS502 DL Biomedicine 2023 Fall Project: Adapted Code Reproduction of PrototypeFormer for Transfer Learning in Biomedical Applications.
 
-In the fewshotbench folder you can find the few shot learning benchmark with added PrototypeFormer method (`methods/protoformer.py`).
+In the `fewshotbench` folder you can find the few shot learning benchmark with added PrototypeFormer method (`methods/protoformer.py`).
 
 There are a lot of hyperparameters that you can tune with PrototypeFormer, such as   
 |Hyperparameter              |                   name|
@@ -18,4 +18,5 @@ There are a lot of hyperparameters that you can tune with PrototypeFormer, such 
 
 To tune this hyper-parameters as well as learning rate and weight decay, we used `optuna` library, please refer to `tuninig.py`.
 
-During the project we also used protbert model to obtain different embeddings and compare the performance of the model while using different embeddings. Please, note, that due to the memory limitations, long (longer than 1000 characters) sequences were truncaetd. Overall, 7% of sequences from swissprot dataset were truncated while computing protbert embeddings.
+During the project we also used protbert model to obtain different embeddings and compare the performance of the model while using different embeddings. Please, note, that due to the memory limitations, long (longer than 1000 characters) sequences were truncaetd. Overall, 7% of sequences from swissprot dataset were truncated while computing protbert embeddings. You can fing the code for the embeddings creation in 
+`protbert_embeddings.py`.
