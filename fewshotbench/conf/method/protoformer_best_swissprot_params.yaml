@@ -1,0 +1,18 @@
+defaults:
+  - meta_base
+
+cls:
+  _target_: methods.protoformer.ProtoFormer
+  n_layer: 3
+  n_head: 1
+  contrastive_coef: 0.9314164626148635
+  n_sub_support: 2
+  ffn_dim: 793
+  dropout: 0.14987173429298378
+  norm_first: False
+  contrastive_loss: 'original'
+
+lr: 4.211550516390048e-05
+weight_decay: 0.0005996893511498704
+
+name: best_params_protoformer_tabula_muris
