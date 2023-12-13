@@ -65,7 +65,7 @@ We use ESM embedding for Swissprot as default, if you want to use Protbert as em
 ### Protbert embedding
 
 During the project, we also used the Protbert model to obtain different embeddings and compare the performance of the model while using different embeddings. Please, note, that due to the memory limitations, long (longer than 1000 characters) sequences were truncated. Overall, 7% of sequences from the SwissProt dataset were truncated while computing Protbert embeddings. You can find the code for the embedding creation in 
-[protbert_embeddings.py](https://github.com/Alvorecer721/DL_Bio_PrototypeFormer/blob/main/fewshotbench/methods/protonet.py). To get the Protbert embedding, use the following:
+[protbert_embeddings.py](https://github.com/Alvorecer721/DL_Bio_PrototypeFormer/blob/main/protbert_embeddings.py). To get the Protbert embedding, use the following:
 
 ```
 python protbert_embeddings.py
@@ -73,4 +73,3 @@ python protbert_embeddings.py
 
 Then you will get the embedding at `data/swissprot/protber_emb`.
 
-### 
