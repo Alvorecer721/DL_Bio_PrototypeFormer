@@ -52,17 +52,8 @@ def test(cfg, model, test_dataset):
 
 
 def tune(dataset, embed, n_trials, stop_epoch, log_mode):
-    """_summary_
-
-    Args:
-        dataset (_type_): _description_
-        embed (_type_): _description_
-        n_trials (_type_): _description_
-        stop_epoch (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
+    """Auto-tune for hyper-parameters"""
+    
     with initialize(config_path="conf/dataset", version_base=None):
         cfg = compose(config_name=dataset, overrides=[
             "+iter_num=600",
@@ -82,52 +73,71 @@ def tune(dataset, embed, n_trials, stop_epoch, log_mode):
 
     def objective(trial):
         with initialize(config_path="conf"):
-            # Compose the configuration with trial-specific overrides
-            cfg = compose(config_name="main", overrides=[
+            # Define the common configuration overrides
+            common_overrides = [
                 "model=protoformer",
                 "method=protoformer",
-                f"method.stop_epoch={stop_epoch}",
                 f"dataset={dataset}", 
-                f"dataset.embed_dir={embed}", 
-                f"lr={trial.suggest_float('lr', 1e-7, 1e-4)}",
-                f"weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-3)}",
                 f"method.cls.n_sub_support={trial.suggest_int('n_sub_support', 2, 4)}",
                 f"method.cls.n_layer={trial.suggest_int('n_layer', 1, 3)}",
-                f"method.cls.n_head={trial.suggest_categorical('n_head', [1, 2, 4, 5, 8])}",
+                f"method.cls.n_head={trial.suggest_categorical('n_head', [1, 2, 4, 8])}",
                 f"method.cls.contrastive_coef={trial.suggest_float('contrastive_coef', 0.1, 2.0)}",
                 f"method.cls.dropout={trial.suggest_float('dropout', 0.0, 0.3)}",
                 f"method.cls.norm_first={trial.suggest_categorical('norm_first', [True, False])}",
-                f"method.cls.contrastive_loss={trial.suggest_categorical('contrastive_loss', ['original', 'info_nce'])}",
-                f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 512, 2048)}", 
-                f"exp.name={dataset}_trial_{trial.number}",
-                f"wandb.mode={log_mode}"
-            ])
+            ]
 
-            fix_seed(cfg.exp.seed)
-            results = []
+            # Conditional overrides for 'swissprot'
+            if "swissprot" in dataset:
+                specific_overrides = [
+                    f"method.stop_epoch={stop_epoch}",
+                    f"dataset.embed_dir={embed}", 
+                    f"lr={trial.suggest_float('lr', 1e-7, 1e-4)}",
+                    f"weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-3)}",
+                    f"method.cls.contrastive_loss={trial.suggest_categorical('contrastive_loss', ['original', 'info_nce'])}",
+                    f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 512, 2048)}",
+                    f"exp.name={dataset}_trial_{trial.number}",
+                    f"wandb.mode={log_mode}"
+                ]
 
-            print(OmegaConf.to_yaml(cfg))
+            # Conditional overrides for 'tabula muris'
+            elif "tabula_muris" in dataset:
+                specific_overrides = [
+                    "method.stop_epoch=60",
+                    f"lr={trial.suggest_float('lr', 1e-5, 5e-3)}",
+                    f"weight_decay={trial.suggest_float('weight_decay', 1e-5, 1e-2)}",
+                    f"method.cls.contrastive_loss={trial.suggest_categorical('contrastive_loss', ['infoNCE', 'original'])}", 
+                    f"method.cls.ffn_dim={trial.suggest_int('ffn_dim', 64, 256)}",
+                    f"exp.name=new_{dataset}_trial_{trial.number}"
+                ]
 
-            # Initialise model and backbone for this trial
-            backbone = instantiate(cfg.backbone, x_dim=train_dataset.dim)
-            model = instantiate(cfg.method.cls, backbone=backbone)
+            # Combine common and specific overrides
+            cfg = compose(config_name="main", overrides=common_overrides + specific_overrides)
 
-            if torch.cuda.is_available():
-                model = model.cuda()
+        fix_seed(cfg.exp.seed)
+        results = []
 
-            model = train(train_loader, val_loader, model, cfg)
+        print(OmegaConf.to_yaml(cfg))
 
-            # Tuning Hyper-parameter only log result on validation set
-            for d in episodic_datasets:
-                acc_mean, acc_std = test(cfg, model, test_dataset=d)
-                results.append([trial.number, d.mode, acc_mean, acc_std])
+        # Initialise model and backbone for this trial
+        backbone = instantiate(cfg.backbone, x_dim=train_dataset.dim)
+        model = instantiate(cfg.method.cls, backbone=backbone)
 
-            # Log results to WandB
-            table = wandb.Table(data=results, columns=["trial", "split", "acc_mean", "acc_std"])
-            wandb.log({"eval_results": table})
-            wandb.finish()
+        if torch.cuda.is_available():
+            model = model.cuda()
 
-            return results[-2][-2] # validation accuracy
+        model = train(train_loader, val_loader, model, cfg)
+
+        # Tuning Hyper-parameter only log result on validation set
+        for d in episodic_datasets:
+            acc_mean, acc_std = test(cfg, model, test_dataset=d)
+            results.append([trial.number, d.mode, acc_mean, acc_std])
+
+        # Log results to WandB
+        table = wandb.Table(data=results, columns=["trial", "split", "acc_mean", "acc_std"])
+        wandb.log({"eval_results": table})
+        wandb.finish()
+
+        return results[-2][-2] # validation accuracy
 
     # Run Optuna study
     study = optuna.create_study(direction="maximize")
