@@ -3,16 +3,16 @@ defaults:
 
 cls:
   _target_: methods.protoformer.ProtoFormer
-  n_layer: 3
-  n_head: 1
-  contrastive_coef: 0.9314164626148635
+  n_layer: 2
+  n_head: 5
+  contrastive_coef: 1.171304807337882
   n_sub_support: 2
-  ffn_dim: 793
-  dropout: 0.14987173429298378
+  ffn_dim: 1957
+  dropout: 0.26492479008497294
   norm_first: False
   contrastive_loss: 'original'
 
-lr: 4.211550516390048e-05
-weight_decay: 0.0005996893511498704
+# lr: 4.211550516390048e-05
+# weight_decay: 0.0005996893511498704
 
-name: best_params_protoformer_tabula_muris
+name: best_params_protoformer_swissprot
