@@ -3,7 +3,14 @@ defaults:
 
 cls:
   _target_: methods.protoformer.ProtoFormer
+  n_layer: ${protoformer_layer_num}
+  n_head: ${protoformer_head_num}
   contrastive_coef: ${contrastive_coef}
-  layer_n: ${protoformer_layer_num}
+  n_sub_support: ${sub_support}
+  ffn_dim: ${dim_feedforward}
+  dropout: ${dropout}
+  norm_first: ${encoder_norm_first}
+  contrastive_loss: ${contrastive_loss}
+
 
 name: protoformer

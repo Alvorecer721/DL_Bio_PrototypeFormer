@@ -30,19 +30,34 @@ model = BertModel.from_pretrained("Rostlab/prot_bert").to(device)
 save_path = "./fewshotbench/data/swissprot/protbert_emb"
 os.makedirs(save_path, exist_ok=True)
 
+MAX_LEN = 2000 # length for truncation
 
 with open("subset.fasta", "r") as fasta_file:
-    for line in fasta_file:
-        if line.startswith(">"):  
-            protein_id = line.strip().split("|")[1]
-
-            sequence_line = fasta_file.readline().strip()
+    line = fasta_file.readline().strip()
+    i = 0
+    large_seq = 0
+    while line != '':
+        if line.startswith(">"):
+            i += 1
+            protein_id = line.split("|")[1]
+            sequence_line = ''
+            line = fasta_file.readline().strip()
+            while line != '' and not line.startswith(">"):
+                sequence_line += line
+                line = fasta_file.readline().strip()
             
             sequence = re.sub(r"[UZOB]", "X", sequence_line)
-
+            sequence = ' '.join(sequence)
+            if len(sequence) > MAX_LEN:
+                torch.cuda.empty_cache()
+                large_seq += 1
+                sequence = sequence[:MAX_LEN]
+            
             encoded_input = tokenizer(sequence, return_tensors="pt").to(device)
             output = model(**encoded_input)
 
             embedding = output["last_hidden_state"].mean(dim=1).cpu().detach()
 
             torch.save({"embedding": embedding}, f"{save_path}/{protein_id}.pt")
+            
+print('Number of truncated sequences ', large_seq/i)

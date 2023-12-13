@@ -64,6 +64,8 @@ class SPSetDataset(SPDataset):
     def __init__(self, n_way, n_support, n_query, n_episode=100, root='./data', mode='train', embed_dir="embeds"):
         self.initialize_data_dir(root, download_flag=False)
 
+        self.mode = mode
+
         self.n_way = n_way
         self.n_episode = n_episode
         min_samples = n_support + n_query
